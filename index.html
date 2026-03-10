@@ -1,16 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -176,7 +165,6 @@
     </div>
 
     <script>
-        // Upgraded Data : Richer vocabulary, strong historical impact, perfect for Euro Class.
         const eventsData = [
             { id: 1, year: 1868.93, side: 'DESSUS', date: 'Dec 9, 1868', location: 'Breslau, Prussia', category: 'Birth/Nobel', text: 'Born to a wealthy Jewish family. He would become one of history\'s most controversial scientists.' },
             { id: 2, year: 1892.85, side: 'DESSOUS', date: 'Nov 1892', location: 'Germany', category: 'Religion', text: 'Converts to Lutheranism to assimilate into German society and advance his academic career.' },
@@ -193,33 +181,30 @@
             { id: 13, year: 1934.08, side: 'DESSUS', date: 'Jan 29, 1934', location: 'Basel, Switzerland', category: 'Death/Exile', text: 'Dies at 65. The ultimate paradox: the man who pulled bread from the air also engineered mass destruction.' }
         ];
 
-        // Color palette
         const categoryColors = {
             'Birth/Nobel': '#2196F3',
             'War/Tragedy': '#F44336',
-            'Career': '#4CAF50',
-            'Science': '#9C27B0',
-            'Personal': '#FF9800',
+            'Career':      '#4CAF50',
+            'Science':     '#9C27B0',
+            'Personal':    '#FF9800',
             'Death/Exile': '#607D8B',
-            'Marriage': '#E91E63',
-            'Religion': '#795548'
+            'Marriage':    '#E91E63',
+            'Religion':    '#795548'
         };
 
         const BASE_YEAR = 1868.93;
-        const SCALE = 60; // 60px per year
-        const OFFSET_X = 100; // Initial left margin
+        const SCALE     = 60;
+        const OFFSET_X  = 100;
 
-        // Phase 1 : Initial math calculations
         eventsData.forEach(ev => {
             ev.anchorX = OFFSET_X + (ev.year - BASE_YEAR) * SCALE;
-            ev.boxX = ev.anchorX - 80; 
-            ev.color = categoryColors[ev.category];
+            ev.boxX    = ev.anchorX - 80;
+            ev.color   = categoryColors[ev.category];
         });
 
-        const topEvents = eventsData.filter(e => e.side === 'DESSUS');
+        const topEvents    = eventsData.filter(e => e.side === 'DESSUS');
         const bottomEvents = eventsData.filter(e => e.side === 'DESSOUS');
 
-        // Phase 2 : Collision Algorithm (+180px shift min)
         function resolveCollisions(eventsArray) {
             for (let i = 1; i < eventsArray.length; i++) {
                 const prev = eventsArray[i - 1];
@@ -232,44 +217,44 @@
         resolveCollisions(topEvents);
         resolveCollisions(bottomEvents);
 
-        const maxBoxX = Math.max(...eventsData.map(e => e.boxX));
-        const totalWidth = maxBoxX + 260; 
+        const maxBoxX    = Math.max(...eventsData.map(e => e.boxX));
+        const totalWidth = maxBoxX + 260;
         document.getElementById('timeline-content').style.width = totalWidth + 'px';
-        document.getElementById('connections').style.width = totalWidth + 'px';
+        document.getElementById('connections').style.width      = totalWidth + 'px';
 
         const timelineContent = document.getElementById('timeline-content');
-        const axis = document.getElementById('axis');
-        const svg = document.getElementById('connections');
-        const displayedYears = new Set();
+        const axis            = document.getElementById('axis');
+        const svg             = document.getElementById('connections');
+        const displayedYears  = new Set();
 
         function renderTimeline() {
             svg.innerHTML = '';
             document.querySelectorAll('.event-box, .axis-dot, .axis-label').forEach(el => el.remove());
 
-            const containerHeight = timelineContent.clientHeight;
-            const centerY = containerHeight / 2;
-            const boxOffsetFromCenter = 15; 
-            
+            const containerHeight    = timelineContent.clientHeight;
+            const centerY            = containerHeight / 2;
+            const boxOffsetFromCenter = 15;
+
             eventsData.forEach(ev => {
                 const dot = document.createElement('div');
-                dot.className = 'axis-dot';
-                dot.style.left = ev.anchorX + 'px';
+                dot.className   = 'axis-dot';
+                dot.style.left  = ev.anchorX + 'px';
                 axis.appendChild(dot);
 
                 const yearInt = Math.floor(ev.year);
                 if (!displayedYears.has(yearInt)) {
                     displayedYears.add(yearInt);
-                    const label = document.createElement('div');
-                    label.className = 'axis-label';
+                    const label       = document.createElement('div');
+                    label.className   = 'axis-label';
                     label.textContent = yearInt;
-                    label.style.left = (ev.anchorX + 10) + 'px'; 
+                    label.style.left  = (ev.anchorX + 10) + 'px';
                     axis.appendChild(label);
                 }
 
-                const box = document.createElement('div');
-                const cssClass = ev.side === 'DESSUS' ? 'top' : 'bottom';
-                box.className = `event-box ${cssClass}`;
-                box.style.left = ev.boxX + 'px';
+                const box       = document.createElement('div');
+                const cssClass  = ev.side === 'DESSUS' ? 'top' : 'bottom';
+                box.className   = `event-box ${cssClass}`;
+                box.style.left  = ev.boxX + 'px';
                 box.style.borderColor = ev.color;
 
                 box.innerHTML = `
@@ -277,17 +262,15 @@
                         <span class="event-date">${ev.date}</span>
                         <span class="event-location">${ev.location}</span>
                     </div>
-                    <div class="event-body">
-                        ${ev.text}
-                    </div>
+                    <div class="event-body">${ev.text}</div>
                 `;
                 timelineContent.appendChild(box);
 
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                const x1 = ev.boxX + 80; 
-                const y1 = ev.side === 'DESSUS' ? (centerY - boxOffsetFromCenter) : (centerY + boxOffsetFromCenter);
-                const x2 = ev.anchorX;
-                const y2 = centerY;
+                const x1   = ev.boxX + 80;
+                const y1   = ev.side === 'DESSUS' ? (centerY - boxOffsetFromCenter) : (centerY + boxOffsetFromCenter);
+                const x2   = ev.anchorX;
+                const y2   = centerY;
 
                 line.setAttribute('x1', x1);
                 line.setAttribute('y1', y1);
@@ -295,7 +278,6 @@
                 line.setAttribute('y2', y2);
                 line.setAttribute('stroke', '#000000');
                 line.setAttribute('stroke-width', '1');
-                
                 svg.appendChild(line);
             });
         }
@@ -304,24 +286,22 @@
         window.addEventListener('resize', renderTimeline);
 
         const wrapper = document.getElementById('scroll-wrapper');
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+        let isDown, startX, scrollLeft;
 
         wrapper.addEventListener('mousedown', (e) => {
-            isDown = true;
-            startX = e.pageX - wrapper.offsetLeft;
+            isDown     = true;
+            startX     = e.pageX - wrapper.offsetLeft;
             scrollLeft = wrapper.scrollLeft;
         });
 
         wrapper.addEventListener('mouseleave', () => { isDown = false; });
-        wrapper.addEventListener('mouseup', () => { isDown = false; });
+        wrapper.addEventListener('mouseup',    () => { isDown = false; });
 
         wrapper.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
-            const x = e.pageX - wrapper.offsetLeft;
-            const walk = (x - startX) * 1.5; 
+            const x    = e.pageX - wrapper.offsetLeft;
+            const walk = (x - startX) * 1.5;
             wrapper.scrollLeft = scrollLeft - walk;
         });
 
@@ -329,11 +309,6 @@
             e.preventDefault();
             wrapper.scrollLeft += e.deltaY;
         }, { passive: false });
-
     </script>
 </body>
-</html>
-    
-  </body>
-  
 </html>
